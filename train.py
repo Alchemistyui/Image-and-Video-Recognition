@@ -16,11 +16,9 @@ from dataset import NumeralDataset
 
 class TrainSolver(object):
     """docstring for TrainSolver"""
-    def __init__(self, params, train_path, test_path):
+    def __init__(self, params):
         super(TrainSolver, self).__init__()
         self.params = params
-        self.train_path = train_path
-        self.test_path = test_path
         loss_func = nn.CrossEntropyLoss()
         # self.optim = torch.optim.Adam(params=net.parameters(), lr= self.params.lr, weight_decay=weight_decay)
         self.net = ElasticWeightConsolidation(BaseModel(400*400, 100, 10), crit=loss_func, lr=1e-4)
@@ -34,13 +32,13 @@ class TrainSolver(object):
             # transforms.Normalize(norm_mean, norm_std),# 标准化
         ])
 
-        train_df = pd.read_csv(self.train_path)
-        test_df = pd.read_csv(self.test_path)
+        train_df = pd.read_csv(csv_files[0])
+        test_df = pd.read_csv(csv_files[1])
 
         # img_train, img_test = imgs.iloc[train_idx], imgs.iloc[test_idx]
         # label_train, label_test = labels.iloc[train_idx], labels.iloc[test_idx]
-        self.trainset = NumeralDataset(train_df, trans)
-        self.testset = NumeralDataset(test_df, trans)
+        self.trainset = NumeralDataset(train_df, trans, self.params.data_root)
+        self.testset = NumeralDataset(test_df, trans, self.params.data_root)
         self.train_loader = DataLoader(
             dataset=self.trainset,
             shuffle=True,
@@ -58,9 +56,21 @@ class TrainSolver(object):
 
         # return train_loader, test_loader
 
+    def lifelong_training(self, path_list):
+        num_task = len(path_list)
 
-    def train(self):
-        self.load_data()
+        for task in range(num_task):
+            print('-'*80)
+            print(path_list[task][0].split('.')[0])
+            self.train(path_list[task])
+            print('-'*80)
+
+
+
+
+    def train(self, csv_files):
+        self.load_data(csv_files)
+        self.net.model.train()
 
         epoch_losses = AverageMeter()
         epoch_accs = AverageMeter()
@@ -71,42 +81,32 @@ class TrainSolver(object):
             for batchID, (img, label) in tqdm(enumerate(self.train_loader)):
                 # img, label = input 
                 # output = net(img)
-                self.net.forward_backward_update(img, label)
-                self.net.register_ewc_params(self.trainset, self.params.batchsize, 300)
+                loss = self.net.forward_backward_update(img, label)
+                losses.update(loss.item(), img.size(0))
+                del loss
 
-            val_acc = self.val()
-            print(f'Epoch {epo}: val acc {val_acc}')
+            # print(f'Epoch {epo:2d}: Train loss {losses.avg:4f}')
+            train_acc = self.eval(self.train_loader)
+            print(f'Epoch {epo:2d}: Train loss {losses.avg:.4f}, Train acc {train_acc:.4f}')
+            val_acc = self.eval(self.test_loader)
+            print(f'Epoch {epo:2d}: Test acc {val_acc:4f}')
 
-        #         optim.zero_grad()
-        #         loss = self.loss_func(output, label)
-        #         loss.backward()
-        #         optim.step()
-        #         corrects += output.eq(label).tolist()
+        self.net.register_ewc_params(self.trainset, self.params.batchsize, 30)
 
-        #         losses.update(loss.item(), img.size(0))
-        #         accs.update(corrects)
-        #         del loss, output
 
-        #     acc = sum(corrects) / float(len(corrects))
-        #     epoch_losses.update(losses.avg)
-        #     print(f'Epoch {epo:2d}: train loss {losses.avg:.4f}, train acc {acc:.4f}')
-        # return epoch_losses.avg, epoch_accs.avg
-
-    def val(self):
-        self.net.eval()
+    def eval(self, dataloader):
+        self.net.model.eval()
         # losses = AverageMeter()
         corrects = [] 
-        for batchID, (img, label) in enumerate(self.val_loader):
-            # img, label = input 
-            output = self.net(img)
+        acc = 0
+        # import pdb
+        # pdb.set_trace()
+        for batchID, (img, label) in enumerate(dataloader):
+            output = self.net.model(img)
 
-            # loss = self.loss_func(output, target)
-            corrects += output.eq(label).tolist()
-            # losses.update(loss.item(), img.size(0))
-            # del loss, output
-        acc = sum(corrects) / float(len(corrects))
-        # return losses.avg, acc
-        return acc
+            acc += (output.argmax(dim=1).long() == label).float().mean()
+
+        return acc / len(dataloader)
 
 
 
@@ -116,11 +116,17 @@ class TrainSolver(object):
 def main():
     # df = pd.read_csv(csv_file)
     # df = df.dropna()
-    train_path = '/Users/Alchemist/Desktop/final_project/data/csv_files/Writer_Shen_train.csv'
-    test_path = '/Users/Alchemist/Desktop/final_project/data/csv_files/Writer_Shen_test.csv'
-    params = edict({'epochs': 10, 'batchsize': 8, 'lr': 1e-3, 'num_classes': 10})
+    path_perfix = '/Users/Alchemist/Desktop/final_project/data/csv_files/'
+    path_list = [['Writer_Cheng_train.csv', 'Writer_Cheng_test.csv'], 
+        ['Writer_Peng_train.csv', 'Writer_Peng_test.csv'],
+        ['Writer_Shen_train.csv', 'Writer_Shen_test.csv'],
+        ['Writer_Wang_train.csv', 'Writer_Wang_test.csv']]
+    # train_path = '/Users/Alchemist/Desktop/final_project/data/csv_files/Writer_Shen_train.csv'
+    # test_path = '/Users/Alchemist/Desktop/final_project/data/csv_files/Writer_Shen_test.csv'
+    params = edict({'epochs': 15, 'batchsize': 8, 'lr': 1e-3, 'num_classes': 10, 
+        'data_root': '/Users/Alchemist/Desktop/final_project/data/dataset/'})
 
-    solver = TrainSolver(params, train_path, test_path)
+    solver = TrainSolver(params)
 
     solver.train()
 

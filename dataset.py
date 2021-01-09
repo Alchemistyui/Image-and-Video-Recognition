@@ -16,9 +16,9 @@ from PIL import Image
 
 
 class NumeralDataset(Dataset):
-    def __init__(self, df, trans, num_cls=10):
+    def __init__(self, df, trans, root, num_cls=10):
         super(NumeralDataset, self).__init__()
-        self.root = '/Users/Alchemist/Desktop/final_project/data/dataset/'
+        self.root = root
         self.trans = trans
         self.img_list = df['FileName'].tolist()
         self.cls_label = df['Class'].tolist()

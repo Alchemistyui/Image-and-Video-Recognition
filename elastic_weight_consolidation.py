@@ -64,6 +64,8 @@ class ElasticWeightConsolidation:
         loss.backward()
         self.optimizer.step()
 
+        return loss
+
     def save(self, filename):
         torch.save(self.model, filename)
 
