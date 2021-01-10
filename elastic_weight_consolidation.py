@@ -1,5 +1,6 @@
 import torch
 import torch.nn as nn
+# import torch.nn.Module as Module
 import torch.nn.functional as F
 import torch.optim as optim
 from torch import autograd
@@ -7,9 +8,10 @@ import numpy as np
 from torch.utils.data import DataLoader
 
 
-class ElasticWeightConsolidation:
+class ElasticWeightConsolidation(nn.Module):
 
     def __init__(self, model, crit, lr=0.001, weight=1000000):
+        super(ElasticWeightConsolidation, self).__init__()
         self.model = model
         self.weight = weight
         self.crit = crit
