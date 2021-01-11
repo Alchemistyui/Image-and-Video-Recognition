@@ -6,8 +6,9 @@ import torchvision
 from torchvision import transforms
 
 import os
-from tqdm import tqdm
+import argparse
 import pandas as pd
+from tqdm import tqdm
 from sklearn.model_selection import StratifiedKFold
 from easydict import EasyDict as edict
 from tensorboardX import SummaryWriter
@@ -16,6 +17,7 @@ from utils import AverageMeter
 from elastic_weight_consolidation import ElasticWeightConsolidation
 from network import BaseModel
 from dataset import NumeralDataset
+# from config import BaseOptions
 
 import pdb
 
@@ -28,7 +30,7 @@ class TrainSolver(object):
         # self.optim = torch.optim.Adam(params=net.parameters(), lr= self.params.lr, weight_decay=weight_decay)
         resnet = torchvision.models.resnet18(pretrained=True)
         self.net = ElasticWeightConsolidation(resnet, crit=self.loss_func, lr=self.params.lr)
-        self.writer = SummaryWriter(self.params.log_dir)
+        # self.writer = SummaryWriter(self.params.log_dir)
         df = pd.read_csv(self.params.csv_root+self.params.csv_list[1])
         self.test_loaders = []
         for task in self.params.task_list:
@@ -148,10 +150,8 @@ class TrainSolver(object):
         mtx = torch.zeros([len(self.test_loaders)+1, len(self.test_loaders)], dtype=torch.float64)
         for loader_idx, loader in enumerate(self.test_loaders):
             test_acc = self.eval(loader, 'train')
-            print(test_acc)
             mtx[0][loader_idx] = test_acc
 
-        print(mtx)
 
         for task_idx, task in enumerate(self.params.task_list):
             print('-'*80)
@@ -165,7 +165,6 @@ class TrainSolver(object):
 
             print(mtx)
 
-        print(mtx)
         return mtx
 
 
@@ -178,7 +177,7 @@ class TrainSolver(object):
         epoch_losses = AverageMeter()
         epoch_accs = AverageMeter()
         best_acc = 0
-        writer = SummaryWriter(self.params.log_dir+'/'+task+'/')
+        writer = SummaryWriter(self.params.log_dir+'/'+'_'.join(self.params.task_list)+'/'+task+'/')
         for epo in range(self.params.epochs):
             # self.net.train()
             losses = AverageMeter()
@@ -203,11 +202,11 @@ class TrainSolver(object):
 
             # self.net.register_ewc_params(self.trainset, self.params.batchsize, 30)
             # remember the best acc.
-            if test_acc > best_acc:
-                best_acc = test_acc
-                # torch.save(self.net.state_dict(), os.path.join(self.params.results_dir, 'EWC_best_task_'+task+'_'+str(round(test_acc.item(), 4))+'.pth'))
-                torch.save({'epoch': epo + 1, 'state_dict': self.net.model.state_dict(), 'best_acc': best_acc,}, 
-                           os.path.join(self.params.results_dir,'EWC_best_task_'+task+'.pth'))
+            # if test_acc > best_acc:
+            #     best_acc = test_acc
+            #     # torch.save(self.net.state_dict(), os.path.join(self.params.results_dir, 'EWC_best_task_'+task+'_'+str(round(test_acc.item(), 4))+'.pth'))
+            #     torch.save({'epoch': epo + 1, 'state_dict': self.net.model.state_dict(), 'best_acc': best_acc,}, 
+            #                os.path.join(self.params.results_dir,'EWC_best_task_'+task+'.pth'))
 
 
 
@@ -265,33 +264,47 @@ class TrainSolver(object):
 
 
 
+def get_opt():
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument("--key", type=str, default="Writer")
+    parser.add_argument("--epochs", type=int, default=10)
+    parser.add_argument("--batchsize", type=int, default=8)
+    parser.add_argument("--lr", type=int, default=1e-5)
+    parser.add_argument("--num_classes", type=str, default=10)
+    parser.add_argument("--data_root", type=str, default="/gs/hs0/tga-shinoda/20M38216/final_project/data/dataset/")
+    parser.add_argument("--csv_root", type=str, default="/gs/hs0/tga-shinoda/20M38216/final_project/data/csv_files/")
+    parser.add_argument("--log_dir", type=str, default="new_logs/")
+    # self.parser.add_argument("--results_dir", type=str, default="/gs/hs0/tga-shinoda/20M38216/final_project/lll_models/log12/")
+    parser.add_argument("--csv_list", default=['task_train.csv', 'task_test.csv'])
+    parser.add_argument("--task_list", required=True, nargs='+')
+
+    opt = parser.parse_args()
+
+    args = vars(opt)
+    for k, v in sorted(args.items()):
+            print('%s: %s' % (str(k), str(v)))
+
+    return opt
+
 
 def main():
-    # df = pd.read_csv(csv_file)
-    # df = df.dropna()
-    # path_perfix = '/Users/Alchemist/Desktop/final_project/data/csv_files/'
-    path_list = [['Writer_Cheng_train.csv', 'Writer_Cheng_test.csv'], 
-        ['Writer_Peng_train.csv', 'Writer_Peng_test.csv'],
-        ['Writer_Shen_train.csv', 'Writer_Shen_test.csv'],
-        ['Writer_Wang_train.csv', 'Writer_Wang_test.csv']]
-    csv_list = ['task_train.csv', 'task_test.csv']
-    # train_path = '/Users/Alchemist/Desktop/final_project/data/csv_files/Writer_Shen_train.csv'
-    # test_path = '/Users/Alchemist/Desktop/final_project/data/csv_files/Writer_Shen_test.csv'
-    params = edict({'key': 'Writer', 'epochs': 10, 'batchsize': 8, 'lr': 1e-5, 'num_classes': 10, 
-        'data_root': '/gs/hs0/tga-shinoda/20M38216/final_project/data/dataset/',
-        'csv_root': '/gs/hs0/tga-shinoda/20M38216/final_project/data/csv_files/',
-        'log_dir': 'resnet_logs/log12',
-        'results_dir': '/gs/hs0/tga-shinoda/20M38216/final_project/lll_models/log12/',
-        'task_list': ['Shen', 'Wang', 'Peng', 'Cheng'],
-        'csv_list': ['task_train.csv', 'task_test.csv']})
+    params = get_opt()
+    # params = edict({'key': 'Writer', 'epochs': 10, 'batchsize': 8, 'lr': 1e-5, 'num_classes': 10, 
+    #     'data_root': '/gs/hs0/tga-shinoda/20M38216/final_project/data/dataset/',
+    #     'csv_root': '/gs/hs0/tga-shinoda/20M38216/final_project/data/csv_files/',
+    #     'log_dir': 'resnet_logs/log12',
+    #     'results_dir': '/gs/hs0/tga-shinoda/20M38216/final_project/lll_models/log12/',
+    #     'task_list': ['Shen', 'Wang', 'Peng', 'Cheng'],
+    #     'csv_list': ['task_train.csv', 'task_test.csv']})
 
     solver = TrainSolver(params)
-    print(params)
+    # print(params)
 
     # torch.save({'epoch': 0, 'state_dict': solver.net.model.state_dict(), 'best_acc': 0.0,}, 
     #                        os.path.join(params.results_dir,'initial.pth'))
-    # solver.lifelong_training()
-    solver.estimate_metrics(None)
+    mtx = solver.lifelong_training()
+    solver.estimate_metrics(mtx)
     # solver.train_base(csv_list)
 
   

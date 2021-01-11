@@ -1,0 +1,37 @@
+batchsize: 8
+csv_list: ['task_train.csv', 'task_test.csv']
+csv_root: /gs/hs0/tga-shinoda/20M38216/final_project/data/csv_files/
+data_root: /gs/hs0/tga-shinoda/20M38216/final_project/data/dataset/
+epochs: 10
+key: Writer
+log_dir: new_logs/exp_3
+lr: 1e-05
+num_classes: 10
+task_list: ['Shen', 'Wang', 'Peng', 'Cheng']
+load 37 image
+load 19 image
+load 22 image
+load 42 image
+--------------------------------------------------------------------------------
+Shen
+load 173 image
+load 37 image
+Epoch  0: Train loss 8.1490, Train acc 0.0000, Test acc 0.000000, Test loss 8.746273
+Epoch  1: Train loss 6.3686, Train acc 0.0432, Test acc 0.065000, Test loss 6.344364
+Epoch  2: Train loss 4.8535, Train acc 0.2057, Test acc 0.090000, Test loss 5.029547
+Epoch  3: Train loss 3.5197, Train acc 0.7352, Test acc 0.420000, Test loss 3.436995
+Epoch  4: Train loss 2.3594, Train acc 0.8977, Test acc 0.545000, Test loss 2.558070
+Epoch  5: Train loss 1.7741, Train acc 0.9773, Test acc 0.645000, Test loss 1.786188
+Epoch  6: Train loss 1.0650, Train acc 0.9886, Test acc 0.745000, Test loss 1.280207
+Epoch  7: Train loss 0.7307, Train acc 0.9943, Test acc 0.835000, Test loss 1.011710
+Epoch  8: Train loss 0.6404, Train acc 0.9943, Test acc 0.925000, Test loss 0.692270
+Epoch  9: Train loss 0.4747, Train acc 1.0000, Test acc 0.925000, Test loss 0.637382
+tensor([[0.0000, 0.0000, 0.0000, 0.0000],
+        [0.9250, 0.1667, 0.4306, 0.2708],
+        [0.0000, 0.0000, 0.0000, 0.0000],
+        [0.0000, 0.0000, 0.0000, 0.0000],
+        [0.0000, 0.0000, 0.0000, 0.0000]], dtype=torch.float64)
+--------------------------------------------------------------------------------
+Wang
+load 191 image
+load 19 image
