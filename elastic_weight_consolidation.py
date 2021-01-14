@@ -31,7 +31,8 @@ class ElasticWeightConsolidation(nn.Module):
             output = F.log_softmax(self.model(input), dim=1)
             # change here
             # log_liklihoods.append(output[:, target])
-            log_liklihoods.append(output)
+            # log_liklihoods.append(output)
+            log_liklihoods.append(torch.gather(output, dim=1, index=target.unsqueeze(-1)))
 
         # import pdb
         # pdb.set_trace()

@@ -15,7 +15,7 @@ from tensorboardX import SummaryWriter
 
 from utils import AverageMeter
 from elastic_weight_consolidation import ElasticWeightConsolidation
-from network import BaseModel
+# from network import BaseModel
 from dataset import NumeralDataset
 # from config import BaseOptions
 
@@ -61,44 +61,7 @@ class TrainSolver(object):
         else:
             return data_loader
 
-    # def load_data(self, train_df, test_df):
-    #     # trans = transforms.Compose([
-    #     #     transforms.Resize((224, 224)),# 缩放
-    #     #     # transforms.RandomCrop(400), #裁剪
-    #     #     # transforms.Grayscale(num_output_channels=1),
-    #     #     transforms.ToTensor(), # change to tensor and normalize to 0-1
-    #     #     # transforms.Normalize(norm_mean, norm_std),# 标准化
-    #     # ])
-    #     trans = transforms.Compose([
-    #         transforms.Resize(256),
-    #         transforms.CenterCrop(224),
-    #         transforms.ToTensor(),
-    #         transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
-    #     ])
-
-    #     # train_df = pd.read_csv(self.params.csv_root+csv_files[0])
-    #     # test_df = pd.read_csv(self.params.csv_root+csv_files[1])
-
-    #     # img_train, img_test = imgs.iloc[train_idx], imgs.iloc[test_idx]
-    #     # label_train, label_test = labels.iloc[train_idx], labels.iloc[test_idx]
-    #     self.trainset = NumeralDataset(train_df, trans, self.params.data_root)
-    #     self.testset = NumeralDataset(test_df, trans, self.params.data_root)
-    #     self.train_loader = DataLoader(
-    #         dataset=self.trainset,
-    #         shuffle=True,
-    #         batch_size=self.params.batchsize,
-    #         num_workers=2,
-    #         pin_memory=torch.cuda.is_available()
-    #     )
-        # self.test_loader = DataLoader(
-        #     dataset=self.testset,
-        #     shuffle=False,
-        #     batch_size=self.params.batchsize,
-        #     num_workers=2,
-        #     pin_memory=torch.cuda.is_available()
-        # )
-
-        # # return train_loader, test_loader
+   
 
     def train_base(self):
         # self.net = BaseModel(400*400, 100, 10)
@@ -130,7 +93,7 @@ class TrainSolver(object):
 
             train_acc = self.eval(self.train_loader, 'train')
             test_acc, test_loss = self.eval(test_loader, 'need_loss')
-            print(f'Epoch {epo:2d}: Train loss {losses.avg:.4f}, Train acc {train_acc:.4f}, Test acc {test_acc:4f}, Test loss {test_loss:4f}')
+            print(f"Epoch {epo:2d}: Train loss {losses.avg:.4f}, Train acc {train_acc:.4f}, Test acc {test_acc:4f}, Test loss {test_loss:4f}")
             self.writer.add_scalar('Train/Loss', losses.avg, epo)
             self.writer.add_scalar('Train/Acc', train_acc, epo)
             self.writer.add_scalar('Test/Acc', test_acc, epo)
@@ -211,7 +174,7 @@ class TrainSolver(object):
 
 
         # pdb.set_trace()
-        self.net.register_ewc_params(trainset, self.params.batchsize, 30)
+        # self.net.register_ewc_params(trainset, self.params.batchsize, 30)
 
 
     def eval(self, dataloader, mode='need_loss'):

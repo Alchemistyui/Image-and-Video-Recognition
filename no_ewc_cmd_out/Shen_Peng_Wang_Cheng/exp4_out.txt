@@ -1,0 +1,93 @@
+batchsize: 8
+csv_list: ['task_train.csv', 'task_test.csv']
+csv_root: /gs/hs0/tga-shinoda/20M38216/final_project/data/csv_files/
+data_root: /gs/hs0/tga-shinoda/20M38216/final_project/data/dataset/
+epochs: 10
+key: Writer
+log_dir: no_ewc_logs/Shen_Peng_Wang_Cheng/exp_4
+lr: 1e-05
+num_classes: 10
+task_list: ['Shen', 'Peng', 'Wang', 'Cheng']
+load 37 image
+load 22 image
+load 19 image
+load 42 image
+--------------------------------------------------------------------------------
+Shen
+load 173 image
+load 37 image
+Epoch  0: Train loss 8.2457, Train acc 0.0000, Test acc 0.000000, Test loss 8.676832
+Epoch  1: Train loss 6.3838, Train acc 0.0284, Test acc 0.000000, Test loss 6.876567
+Epoch  2: Train loss 4.8420, Train acc 0.2045, Test acc 0.165000, Test loss 5.204048
+Epoch  3: Train loss 3.5015, Train acc 0.7182, Test acc 0.420000, Test loss 3.495832
+Epoch  4: Train loss 2.2859, Train acc 0.8864, Test acc 0.520000, Test loss 2.680519
+Epoch  5: Train loss 1.5914, Train acc 0.9511, Test acc 0.555000, Test loss 1.814768
+Epoch  6: Train loss 1.0888, Train acc 0.9830, Test acc 0.785000, Test loss 1.362944
+Epoch  7: Train loss 0.6863, Train acc 0.9943, Test acc 0.860000, Test loss 1.143052
+Epoch  8: Train loss 0.5661, Train acc 0.9943, Test acc 0.885000, Test loss 0.908145
+Epoch  9: Train loss 0.4908, Train acc 1.0000, Test acc 0.910000, Test loss 0.665074
+tensor([[0.0000, 0.0000, 0.0000, 0.0000],
+        [0.9100, 0.3611, 0.1667, 0.3125],
+        [0.0000, 0.0000, 0.0000, 0.0000],
+        [0.0000, 0.0000, 0.0000, 0.0000],
+        [0.0000, 0.0000, 0.0000, 0.0000]], dtype=torch.float64)
+--------------------------------------------------------------------------------
+Peng
+load 188 image
+load 22 image
+Epoch  0: Train loss 2.6880, Train acc 0.7760, Test acc 0.902778, Test loss 1.165242
+Epoch  1: Train loss 1.7363, Train acc 0.9271, Test acc 0.944444, Test loss 0.607969
+Epoch  2: Train loss 1.1827, Train acc 0.9688, Test acc 0.944444, Test loss 0.432252
+Epoch  3: Train loss 0.6407, Train acc 0.9896, Test acc 1.000000, Test loss 0.323204
+Epoch  4: Train loss 0.5018, Train acc 1.0000, Test acc 1.000000, Test loss 0.173565
+Epoch  5: Train loss 0.2894, Train acc 1.0000, Test acc 1.000000, Test loss 0.125096
+Epoch  6: Train loss 0.3559, Train acc 1.0000, Test acc 1.000000, Test loss 0.092945
+Epoch  7: Train loss 0.2039, Train acc 1.0000, Test acc 1.000000, Test loss 0.112351
+Epoch  8: Train loss 0.2542, Train acc 1.0000, Test acc 1.000000, Test loss 0.071985
+Epoch  9: Train loss 0.1246, Train acc 1.0000, Test acc 1.000000, Test loss 0.062768
+tensor([[0.0000, 0.0000, 0.0000, 0.0000],
+        [0.9100, 0.3611, 0.1667, 0.3125],
+        [0.9750, 1.0000, 0.4583, 0.7917],
+        [0.0000, 0.0000, 0.0000, 0.0000],
+        [0.0000, 0.0000, 0.0000, 0.0000]], dtype=torch.float64)
+--------------------------------------------------------------------------------
+Wang
+load 191 image
+load 19 image
+Epoch  0: Train loss 1.5299, Train acc 0.8646, Test acc 0.763889, Test loss 1.408844
+Epoch  1: Train loss 0.8371, Train acc 0.9688, Test acc 0.805556, Test loss 0.980184
+Epoch  2: Train loss 0.6700, Train acc 0.9836, Test acc 0.847222, Test loss 0.632895
+Epoch  3: Train loss 0.3713, Train acc 0.9948, Test acc 0.805556, Test loss 0.567962
+Epoch  4: Train loss 0.3624, Train acc 0.9948, Test acc 0.805556, Test loss 0.469908
+Epoch  5: Train loss 0.3283, Train acc 1.0000, Test acc 0.805556, Test loss 0.435510
+Epoch  6: Train loss 0.2547, Train acc 1.0000, Test acc 0.847222, Test loss 0.389153
+Epoch  7: Train loss 0.1215, Train acc 1.0000, Test acc 0.847222, Test loss 0.342013
+Epoch  8: Train loss 0.2190, Train acc 1.0000, Test acc 0.888889, Test loss 0.334903
+Epoch  9: Train loss 0.1759, Train acc 1.0000, Test acc 0.888889, Test loss 0.241893
+tensor([[0.0000, 0.0000, 0.0000, 0.0000],
+        [0.9100, 0.3611, 0.1667, 0.3125],
+        [0.9750, 1.0000, 0.4583, 0.7917],
+        [0.9500, 1.0000, 0.8889, 0.8958],
+        [0.0000, 0.0000, 0.0000, 0.0000]], dtype=torch.float64)
+--------------------------------------------------------------------------------
+Cheng
+load 168 image
+load 42 image
+Epoch  0: Train loss 0.6043, Train acc 0.9583, Test acc 0.958333, Test loss 0.282429
+Epoch  1: Train loss 0.4212, Train acc 0.9940, Test acc 0.979167, Test loss 0.185611
+Epoch  2: Train loss 0.1469, Train acc 1.0000, Test acc 0.979167, Test loss 0.177784
+Epoch  3: Train loss 0.1371, Train acc 1.0000, Test acc 0.979167, Test loss 0.164419
+Epoch  4: Train loss 0.0634, Train acc 1.0000, Test acc 0.979167, Test loss 0.159506
+Epoch  5: Train loss 0.1509, Train acc 1.0000, Test acc 0.979167, Test loss 0.152012
+Epoch  6: Train loss 0.1112, Train acc 1.0000, Test acc 0.979167, Test loss 0.138677
+Epoch  7: Train loss 0.0988, Train acc 1.0000, Test acc 0.979167, Test loss 0.129461
+Epoch  8: Train loss 0.0479, Train acc 1.0000, Test acc 0.979167, Test loss 0.088925
+Epoch  9: Train loss 0.0361, Train acc 1.0000, Test acc 0.979167, Test loss 0.087327
+tensor([[0.0000, 0.0000, 0.0000, 0.0000],
+        [0.9100, 0.3611, 0.1667, 0.3125],
+        [0.9750, 1.0000, 0.4583, 0.7917],
+        [0.9500, 1.0000, 0.8889, 0.8958],
+        [0.9750, 1.0000, 0.8472, 0.9792]], dtype=torch.float64)
+--------------------------------------------------------------------------------
+Estimate Metrics
+Accuracy 0.950347, Backward Transfer 0.007778, Forward Transfer 0.571759
