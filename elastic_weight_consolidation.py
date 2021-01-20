@@ -1,5 +1,6 @@
 import torch
 import torch.nn as nn
+# import torch.nn.Module as Module
 import torch.nn.functional as F
 import torch.optim as optim
 from torch import autograd
@@ -7,9 +8,10 @@ import numpy as np
 from torch.utils.data import DataLoader
 
 
-class ElasticWeightConsolidation:
+class ElasticWeightConsolidation(nn.Module):
 
     def __init__(self, model, crit, lr=0.001, weight=1000000):
+        super(ElasticWeightConsolidation, self).__init__()
         self.model = model
         self.weight = weight
         self.crit = crit
@@ -29,7 +31,8 @@ class ElasticWeightConsolidation:
             output = F.log_softmax(self.model(input), dim=1)
             # change here
             # log_liklihoods.append(output[:, target])
-            log_liklihoods.append(output)
+            # log_liklihoods.append(output)
+            log_liklihoods.append(torch.gather(output, dim=1, index=target.unsqueeze(-1)))
 
         # import pdb
         # pdb.set_trace()
