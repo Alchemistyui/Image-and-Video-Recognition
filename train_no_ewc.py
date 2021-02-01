@@ -62,7 +62,7 @@ class TrainSolver(object):
             return data_loader
 
 
-    def train_base(self, task, train_df, test_df):
+    def train_base(self, task, train_df, test_df, task_idx):
         # self.net = BaseModel(400*400, 100, 10)
         # train_df = pd.read_csv(self.params.csv_root+self.params.csv_list[0], 'train')
         # test_df = pd.read_csv(self.params.csv_root+self.params.csv_list[1])
@@ -101,6 +101,12 @@ class TrainSolver(object):
             writer.add_scalar('Test/Acc', test_acc, epo)
             writer.add_scalar('Test/Loss', test_loss, epo)
 
+            for loader_idx, loader in enumerate(self.test_loaders):
+                lll_test_acc = self.eval(loader, 'train')
+                new_writer = SummaryWriter(self.params.log_dir+'/'+'_'.join(self.params.task_list)+'/'+self.params.task_list[loader_idx]+'/')
+                new_writer.add_scalar('LLL/Acc', lll_test_acc, epo+task_idx*10)
+
+
             # remember the best acc.
             # if test_acc > best_acc:
             #     best_acc = test_acc
@@ -123,7 +129,7 @@ class TrainSolver(object):
             print(task)
             task_train_df = train_df[train_df[self.params.key] == task]
             task_test_df = test_df[test_df[self.params.key] == task]
-            self.train_base(task, task_train_df, task_test_df)
+            self.train_base(task, task_train_df, task_test_df, task_idx)
             for loader_idx, loader in enumerate(self.test_loaders):
                 test_acc, _ = self.eval(loader, 'need_loss')
                 mtx[task_idx+1][loader_idx] = test_acc

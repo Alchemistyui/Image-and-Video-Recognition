@@ -121,7 +121,7 @@ class TrainSolver(object):
             print(task)
             task_train_df = train_df[train_df[self.params.key] == task]
             task_test_df = test_df[test_df[self.params.key] == task]
-            self.train(task, task_train_df, task_test_df)
+            self.train(task, task_train_df, task_test_df, task_idx)
             for loader_idx, loader in enumerate(self.test_loaders):
                 test_acc, _ = self.eval(loader, 'need_loss')
                 mtx[task_idx+1][loader_idx] = test_acc
@@ -132,7 +132,7 @@ class TrainSolver(object):
 
 
 
-    def train(self, task, train_df, test_df):
+    def train(self, task, train_df, test_df, task_idx):
         train_loader, trainset = self.load_data(train_df, 'train')
         test_loader = self.load_data(test_df)
         self.net.model.train()
@@ -161,16 +161,12 @@ class TrainSolver(object):
             writer.add_scalar('Train/Acc', train_acc, epo)
             writer.add_scalar('Test/Acc', test_acc, epo)
             writer.add_scalar('Test/Loss', test_loss, epo)
-            # print(f'Epoch {epo:2d}: Test acc {val_acc:4f}')
+            
 
-            # self.net.register_ewc_params(self.trainset, self.params.batchsize, 30)
-            # remember the best acc.
-            # if test_acc > best_acc:
-            #     best_acc = test_acc
-            #     # torch.save(self.net.state_dict(), os.path.join(self.params.results_dir, 'EWC_best_task_'+task+'_'+str(round(test_acc.item(), 4))+'.pth'))
-            #     torch.save({'epoch': epo + 1, 'state_dict': self.net.model.state_dict(), 'best_acc': best_acc,}, 
-            #                os.path.join(self.params.results_dir,'EWC_best_task_'+task+'.pth'))
-
+            for loader_idx, loader in enumerate(self.test_loaders):
+                lll_test_acc = self.eval(loader, 'train')
+                new_writer = SummaryWriter(self.params.log_dir+'/'+'_'.join(self.params.task_list)+'/'+self.params.task_list[loader_idx]+'/')
+                new_writer.add_scalar('LLL/Acc', lll_test_acc, epo+task_idx*10)
 
 
         # pdb.set_trace()
